@@ -1,7 +1,7 @@
 # FvU
 Fused versus Unfused - Modelling the behaviour of chromosomal clines
 
-Veltsos et al. 2008 modelled two things. (1) the selection conditions for which a neo-X/neo-Y sex determination system can become fixed in a population with X0-system, and (2) which conditons favour the spread of the neo-sex chromosome system into other populations.
+Veltsos et al. 2008 modelled two things. (1) the selection conditions for which a neo-X/neo-Y sex determination system can become fixed in a population with X0-system, and (2) which conditons favour the spread of the neo-sex chromosome system into other populations. This repo recapitulates and extends (2).
 
 
 ## Files
