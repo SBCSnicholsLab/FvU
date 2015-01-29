@@ -15,4 +15,4 @@ TAB-separated table of gamete ratios obtained from ancestral genotypes
 
 
 **genotypes.csv**
-TAB-separated table of zygotic genotypes resulting from all possible combination of gametes
+TAB-separated table of zygotic genotypes resulting from all possible combinations of gametes
