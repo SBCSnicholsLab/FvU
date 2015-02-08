@@ -55,20 +55,26 @@ if(is.null(dim(todo)[1])){
         
         abc<- abc[,order(abc[7,])]
         
-        Flim<-min(which(abc[8,]==1))
-        Ylim<-min(which(abc[9,]==1))
+        if(1 %in% abc[8,]){
+                Flim<-min(which(abc[8,]==1))
+        } else {Flim <- 1000}
+        if(1 %in% abc[9,]){
+                Ylim<-min(which(abc[9,]==1))
+        } else {Ylim <- 1000}
         if(Flim<Ylim){abslim<-Ylim} else {abslim<-Flim}
         
-        png(paste('dances/dance_', substr(nutona(todo), 1, 79), '.png'), width= 1400, height= 800)
-        plot(abc[7,0:Flim], abc[3,0:Flim], type='l', col='blue', ylim=c(0,40), xlim=c(0,10000), main=substr(nutona(todo), 1, 79))
-        points(abc[7,0:Flim], abc[3,0:Flim]- abs(1/abc[2,0:Flim]/2), type='l', col='lightblue')
-        points(abc[7,0:Flim], abc[3,0:Flim]+ abs(1/abc[2,0:Flim]/2), type='l', col='lightblue')
-        points(abc[7,0:Ylim], abc[6,0:Ylim], type='l', col='red')
-        points(abc[7,0:Ylim], abc[6,0:Ylim]+ abs(1/abc[5,0:Ylim]/2), type='l', col='pink')
-        points(abc[7,0:Ylim], abc[6,0:Ylim]- abs(1/abc[5,0:Ylim]/2), type='l', col='pink')
+        png(paste0('dances/dance_', substr(nutona(todo), 1, 79), '.png'), width= 1400, height= 800)
+        plot(abc[7,1:Flim], abc[3,1:Flim], type='l', col='blue', ylim=c(0,40), xlim=c(0,10000), main=substr(nutona(todo), 1, 79), frame=F)
+        points(abc[7,1:Flim], abc[3,1:Flim]- abs(1/abc[2,0:Flim]/2), type='l', col='lightblue')
+        points(abc[7,1:Flim], abc[3,1:Flim]+ abs(1/abc[2,0:Flim]/2), type='l', col='lightblue')
+        points(abc[7,1:Ylim], abc[6,1:Ylim], type='l', col='red')
+        points(abc[7,1:Ylim], abc[6,1:Ylim]+ abs(1/abc[5,0:Ylim]/2), type='l', col='pink')
+        points(abc[7,1:Ylim], abc[6,1:Ylim]- abs(1/abc[5,0:Ylim]/2), type='l', col='pink')
+        segments(0,0,10000,0)
+        segments(0,40,10000,40)
         dev.off()
         
-        write.table(t(abc), paste('dances/dance_', substr(nutona(todo), 1, 79)),
+        write.table(t(abc), paste0('dances/dance_', substr(nutona(todo), 1, 79)),
                     sep='\t', row.names=F)
         
         print(Sys.time()-t0)
@@ -85,20 +91,26 @@ if(is.null(dim(todo)[1])){
                 
                 abc<- abc[,order(abc[7,])]
                 
-                Flim<-min(which(abc[8,]==1))
-                Ylim<-min(which(abc[9,]==1))
+                if(1 %in% abc[8,]){
+                        Flim<-min(which(abc[8,]==1))
+                } else {Flim <- 1000}
+                if(1 %in% abc[9,]){
+                        Ylim<-min(which(abc[9,]==1))
+                } else {Ylim <- 1000}
                 if(Flim<Ylim){abslim<-Ylim} else {abslim<-Flim}
                 
-                png(paste('dances/dance_', substr(nutona(todo[i,]), 1, 79), '.png'), width= 1400, height= 800)
-                plot(abc[7,0:Flim], abc[3,0:Flim], type='l', col='blue', ylim=c(0,40), xlim=c(0,10000), main=substr(nutona(todo[i,]), 1, 79))
-                points(abc[7,0:Flim], abc[3,0:Flim]- abs(1/abc[2,0:Flim]/2), type='l', col='lightblue')
-                points(abc[7,0:Flim], abc[3,0:Flim]+ abs(1/abc[2,0:Flim]/2), type='l', col='lightblue')
-                points(abc[7,0:Ylim], abc[6,0:Ylim], type='l', col='red')
-                points(abc[7,0:Ylim], abc[6,0:Ylim]+ abs(1/abc[5,0:Ylim]/2), type='l', col='pink')
-                points(abc[7,0:Ylim], abc[6,0:Ylim]- abs(1/abc[5,0:Ylim]/2), type='l', col='pink')
+                png(paste0('dances/dance_', substr(nutona(todo[i,]), 1, 79), '.png'), width= 1400, height= 800)
+                plot(abc[7,1:Flim], abc[3,1:Flim], type='l', col='blue', ylim=c(0,40), xlim=c(0,10000), main=substr(nutona(todo[i,]), 1, 79), frame=F)
+                points(abc[7,1:Flim], abc[3,1:Flim]- abs(1/abc[2,0:Flim]/2), type='l', col='lightblue')
+                points(abc[7,1:Flim], abc[3,1:Flim]+ abs(1/abc[2,0:Flim]/2), type='l', col='lightblue')
+                points(abc[7,1:Ylim], abc[6,1:Ylim], type='l', col='red')
+                points(abc[7,1:Ylim], abc[6,1:Ylim]+ abs(1/abc[5,0:Ylim]/2), type='l', col='pink')
+                points(abc[7,1:Ylim], abc[6,1:Ylim]- abs(1/abc[5,0:Ylim]/2), type='l', col='pink')
+                segments(0,0,10000,0)
+                segments(0,40,10000,40)
                 dev.off()
                 
-                write.table(t(abc), paste('dances/dance_', substr(nutona(todo[i,]), 1, 79)),
+                write.table(t(abc), paste0('dances/dance_', substr(nutona(todo[i,]), 1, 79)),
                             sep='\t', row.names=F)
                 
                 print(Sys.time()-t0)
