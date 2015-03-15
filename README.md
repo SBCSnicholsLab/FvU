@@ -5,6 +5,12 @@ Veltsos et al. 2008 modelled two things. (1) the selection conditions for which 
 
 
 ## Files
+
+###**FvU3D.py**
+Python version with slightliy better performance (only about 35\% of the R version's runtime). GLM and text file output is not implemented yet, but will not require much runtime. Standard array shape is 10x90 populations.
+
+Requires numpy and matplotlib.
+
 ###**FvsU.R**
 recapitulates what was done in Veltsos et al. 2008 to model the spread of a sex determination system among populations (along a gradient).
 
