@@ -7,9 +7,13 @@ Veltsos et al. 2008 modelled two things. (1) the selection conditions for which 
 ## Files
 
 ###**FvU3D.py**
-Python version with slightliy better performance (only about 35\% of the R version's runtime). GLM and text file output is not implemented yet, but will not require much runtime. Standard array shape is 10x90 populations.
-
-Requires numpy and matplotlib.
+Python version with even better performance now. GLM and text file output are implemented now. The outpusts are:  
+1. for the whole run one tab-delimited TXT file with GLM parameters (Y intercept, Y slope, Y centre, F intercept, F slope, F centre),  
+2. every ten generations one GZ-compressed pickle file of the genotype dictionary, and   
+3. every ten generations one a GZ-compressed TXT table with hits and misses for F and Y (can be imported into R to visualise it with rgl or to do other funny things...)  
+The standard array shape is 10x120 populations.  
+USAGE: python FvU3D.py \<sm\> \<dm\> \<sf\> \<df\> \<sh\> \<sd\> \<sc\> \<disp\> \<grad\> \<run no\>  
+Requires numpy1.9 and matplotlib.
 
 ###**FvsU.R**
 recapitulates what was done in Veltsos et al. 2008 to model the spread of a sex determination system among populations (along a gradient).
