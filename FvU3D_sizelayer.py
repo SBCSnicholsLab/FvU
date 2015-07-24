@@ -1,11 +1,25 @@
 #!/usr/bin/python
 
 
-#FvU3D.py currently takes three pramameters all of which have to be supplied when calling the programme.
-#These are sm (selection against the)
-#EXAMPLE: python FvU3D.py .05 1 .1 1 0 0 0 .03 0 1
+'''
+FvU3D_sizelayer_wind.py ten pramameters all of which have to be supplied when
+calling the programme. These are
+sm (selection against the Y in males),
+dm (dominance of the Y in males),
+sf (selection against the Y in males),
+df (dominance of the Y in males),
+sh (selection against heterozygote females, heterozygote disadvantage),
+sd (dosage compensation),
+sc (sex chromosome co-adaption),
+disp (fraction of a deme that disperse to each direction
+	i.e. the actual dispersal is disp*4),
+grad (population size gradient to be used; possible options are 0-8 for
+	speepnesses of 0, 1, 3, 5, 6, 7, 9, 11, and 13%), and
+run (a number that will be displayed in the output file names)
 
-
+EXAMPLE: time python FvU3D_sizelayer.py .01 1 .01 1 0 0 0 .03 4 1
+This will use a gradient of 6% effectively stopping the clines' forward-movement.
+'''
 
 import numpy as np
 import sys
@@ -33,11 +47,8 @@ Yabs = np.array([2,0,1,1,0, 2,0,1,1,0,0])
 def Fratio(x):
 	return np.sum(x*Fgenotypes, axis=2)/np.sum(x*Fpot, axis=2)
 
-
-
 def YFratio(x):
 	return np.sum(x*Ygenotypes, axis=2)/np.sum(x*Ypot, axis=2)
-
 
 def Fhits(x):
 	return np.sum(x*Fgenotypes, axis=2)
@@ -84,31 +95,35 @@ def params():
 	global selector
 	selector=np.array([[1-sm, 1, (1-sm*dm)*(1-.5*sd)*(1-.5*sc), (1-sm)*(1-.5*sd)*(1-sc),\
 		(1-.5*sd)*(1-sc), 1, 1, (1-sh)*(1-.5*sd)*(1-.5*sc), (1-sf*df)*(1-.5*sd)*(1-.5*sc),\
-		(1-sf*df)*(1-sh)*(1-.5*sc), (1-sf)*(1-sd)*(1-sc)]])
+		(1-sf*df)*(1-sh)*(1-.5*sc), (1-sf)*(1-sd)*(1-sc), 1]])
 
 
 #Intialises a 3D genotype array ['g']
 #(plus a counter['c'], an abundance matrix ['abu'] and other stuff
 #that may become important later).
 #Returns a dictionary containing all that stuff
-def initialise(wi=10, leng=120, popsize=40):
-
-	a=np.zeros([wi, leng, 11])
-
-	abu=np.repeat(popsize , wi*leng).reshape(wi, leng)
+def initialise(wi=10, leng=100):
 
 
-	a[:, 0:20, [1,6]]=.5	#fused
-	a[:, 20:, [0,5]]=.5	#unfused
+	gradients = np.array([40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,41,41,42,42,42,43,43,44,44,45,45,46,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,56,56,57,57,58,58,59,60,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,41,42,44,45,46,48,49,51,52,54,55,57,59,61,62,64,66,68,70,72,74,77,79,81,84,86,89,92,94,97,100,103,106,109,113,116,119,123,127,130,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,42,44,46,49,51,54,56,59,62,65,68,72,75,79,83,87,92,96,101,106,111,117,123,129,135,142,149,157,165,173,182,191,200,210,221,232,243,255,268,282,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,42,45,48,50,54,57,60,64,68,72,76,80,85,90,96,102,108,114,121,128,136,144,153,162,172,182,193,204,217,230,244,258,274,290,307,326,345,366,388,411,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,43,46,49,52,56,60,64,69,74,79,84,90,96,103,110,118,126,135,145,155,166,177,190,203,217,232,249,266,285,304,326,349,373,399,427,457,489,523,560,599,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,44,48,52,56,62,67,73,80,87,95,103,113,123,134,146,159,173,189,206,224,244,266,290,316,345,376,410,447,487,531,578,631,687,749,817,890,970,1057,1153,1256,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,44,49,55,61,67,75,83,92,102,114,126,140,155,172,191,212,236,262,291,322,358,397,441,490,543,603,670,743,825,916,1016,1128,1252,1390,1543,1713,1901,2110,2342,2600,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,45,51,58,65,74,83,94,106,120,136,153,173,196,221,250,283,319,361,408,461,521,589,665,752,849,960,1084,1225,1385,1565,1768,1998,2258,2551,2883,3257,3681,4159,4700,5311]).reshape(9, 100)
 
-	a=a*abu[:,:,np.newaxis]
+	a=np.zeros([wi, leng, 12])
+
+	a[:, :, 11] = np.tile(gradients[grad, :], wi).reshape(wi, leng)
+#	abu=np.repeat(40 , wi*leng).reshape(wi, leng)
+
+
+	a[:, 0:60, [1,6]]=1	#fused
+	a[:, 61:, [0,5]]=1	#unfused
+
+	a[:, :, 0:11]=a[:, :, 0:11]*a[:, :, [11]]
 
 	c=0
 
 	trans=np.array([0,0])
 
-	print "Matrix initialised with %dx%d populations of %d individuals each." % (wi, leng, popsize)
-	return {'g': a, 'abu': abu, 'c': c, 'fm': a[:,[0],:], 'um': a[:,[leng-1],:], 'trans':trans}
+	print "Matrix initialised with %dx%d populations." % (wi, leng)
+	return {'g': a, 'c': c, 'fm': a[:,[0],:], 'um': a[:,[leng-1],:], 'trans':trans}
 
 
 
@@ -117,7 +132,7 @@ def initialise(wi=10, leng=120, popsize=40):
 #returns a 1D 8-item gamete vector
 def ggr(x):	
 
-	return np.sum(x*gamconv, axis=1)
+	return np.hstack((np.sum(x[0:11]*gamconv, axis=1),x[11]))
 
 #GAmete SAample
 #samples gametes according to gamete ratios, does sex and
@@ -125,11 +140,11 @@ def ggr(x):
 def gasa(x):	
 
 	#Male gAMETES
-	mametes=np.repeat(np.arange(5),np.random.multinomial(40, x[0:5]/sum(x[0:5]), 1).flatten())
+	mametes=np.repeat(np.arange(5),np.random.multinomial(x[8], x[0:5]/sum(x[0:5]), 1).flatten())
 	np.random.shuffle(mametes)
 
 	#Female gAMETES
-	fametes=np.repeat(np.arange(3),np.random.multinomial(40, x[5:8]/sum(x[5:8]), 1).flatten())
+	fametes=np.repeat(np.arange(3),np.random.multinomial(x[8], x[5:8]/sum(x[5:8]), 1).flatten())
 	np.random.shuffle(fametes)
 
 	##FASTAER SEX NOW - MULTIPLE SELECTION FROM ARRAY BY "ADVANCED" INDEXING
@@ -146,29 +161,23 @@ def tgb(genot, gens=10):
 	
 	
 	#intgen is the tbg-internal version of the genotype array
-	#it is two elements wirde in the firs two dimensions to allow
-	#distribution to be modelled by addition of an offset vrsion of the array
+	#it is two elements wirder in the first two dimensions to allow
+	#distribution to be modelled by addition of an offset version of the array
 	
 	intgen=np.zeros(dimensions+np.array([2,2,0]))
 	
 	intgen[1:(dimensions[0]+1), 1:(dimensions[1]+1), :]=genot['g']
 
-	#DISPersal FACTor is an arry with the same dimensions as the genotype array
-	#it is being multiplid with the genotypes to account for margin effects
-#	dispfact=np.repeat(1-disp*4, np.prod(dimensions)).reshape(dimensions)
-#	dispfact[[0,dimensions[0]-1],:,:]=1-disp*3
-#	dispfact[:,[0,dimensions[1]-1],:]=1-disp*3
-#	dispfact[[0, 0, dimensions[0]-1, dimensions[0]-1],[0, dimensions[1]-1, 0, dimensions[1]-1],:]=1-disp*2
-#	print dispfact
 
 	for i in range(gens):
 		#dispersal
-		intgen[1:(dimensions[0]+1), 1:(dimensions[1]+1), :]=\
-			intgen[1:(dimensions[0]+1), 1:(dimensions[1]+1), :]*(1-4*disp)+\
-			intgen[0:(dimensions[0]), 1:(dimensions[1]+1), :]*disp+\
-			intgen[2:(dimensions[0]+2), 1:(dimensions[1]+1), :]*disp+\
-			intgen[1:(dimensions[0]+1), 0:(dimensions[1]), :]*disp+\
-			intgen[1:(dimensions[0]+1), 2:(dimensions[1]+2), :]*disp
+		
+		intgen[1:(dimensions[0]+1), 1:(dimensions[1]+1), 0:11]=\
+			intgen[1:(dimensions[0]+1), 1:(dimensions[1]+1), 0:11]*(1-4*disp)+\
+			intgen[0:(dimensions[0]), 1:(dimensions[1]+1), 0:11]*disp+\
+			intgen[2:(dimensions[0]+2), 1:(dimensions[1]+1), 0:11]*disp+\
+			intgen[1:(dimensions[0]+1), 0:(dimensions[1]), 0:11]*disp+\
+			intgen[1:(dimensions[0]+1), 2:(dimensions[1]+2), 0:11]*disp
 		#print intgen[:,18:22,:]
 		
 
@@ -185,7 +194,7 @@ def tgb(genot, gens=10):
 #		print gametes[:,19:23,:]
 
 		#back to genotypes. this where drift is acting, cf. gasa function
-		intgen[1:(dimensions[0]+1), 1:(dimensions[1]+1), :]=np.apply_along_axis(gasa, 2, gametes)
+		intgen[1:(dimensions[0]+1), 1:(dimensions[1]+1), 0:11]=np.apply_along_axis(gasa, 2, gametes)
 		genot['c']+=1
 		#print genot['c']
 	genot['g']=intgen[1:(dimensions[0]+1), 1:(dimensions[1]+1), :]
@@ -204,22 +213,21 @@ def __main__():
 
 
 	genotypes=initialise()
-
-	paramtab = open('sm%1.3f_dm%1.3f_sf%1.3f_df%1.3f_sh%1.3f_sd%1.3f_sc%1.3f_disp%1.3f_grad%1.3f_run%d_gens%05d.tab'%\
+#	print genotypes['g']	#for debug only
+	paramtab = open('sm%1.3f_dm%1.3f_sf%1.3f_df%1.3f_sh%1.3f_sd%1.3f_sc%1.3f_disp%1.3f_grad%1.3f_run%03d_gens%05d.tab'%\
 			(sm, dm, sf, df, sh, sd, sc, disp, grad, run, genotypes['c']), 'w')
 	paramtab.write('Yint\tYslope\tYcent\tFint\tFslope\tFcent\n')
 
-	for i in range(10):
+	for i in range(1000):
 		genotypes=tgb(genotypes, 10)
 
 
-		Fh=Fhits(genotypes['g']).flatten()
-		Fm=Fmisses(genotypes['g']).flatten()
-		Yh=Yhits(genotypes['g']).flatten()
-		Ym=Ymisses(genotypes['g']).flatten()
+		Fh=Fhits(genotypes['g'][:, :, 0:11]).flatten()
+		Fm=Fmisses(genotypes['g'][:, :, 0:11]).flatten()
+		Yh=Yhits(genotypes['g'][:, :, 0:11]).flatten()
+		Ym=Ymisses(genotypes['g'][:, :, 0:11]).flatten()
 
 		yvals=stm.tools.add_constant(np.tile(np.arange(genotypes['g'].shape[1]),genotypes['g'].shape[0]))
-
 
 		genotypes['modelparams']=[]
 		glmy=stm.GLM(np.column_stack((Yh, Ym)), yvals, family=stm.families.Binomial())
@@ -230,11 +238,11 @@ def __main__():
 		glmfp=glmf.fit().params
 		genotypes['modelparams'] += [glmfp[0], glmfp[1], -glmfp[0]/glmfp[1]]
 
-		pickle.dump(genotypes, gzip.open('sm%1.3f_dm%1.3f_sf%1.3f_df%1.3f_sh%1.3f_sd%1.3f_sc%1.3f_disp%1.3f_grad%1.3f_run%d_gens%05d.pyd.gz'%\
+		pickle.dump(genotypes, gzip.open('sm%1.3f_dm%1.3f_sf%1.3f_df%1.3f_sh%1.3f_sd%1.3f_sc%1.3f_disp%1.3f_grad%1.3f_run%03d_gens%05d.pyd.gz'%\
 			(sm, dm, sf, df, sh, sd, sc, disp, grad, run, genotypes['c']), 'w'))
 
 
-		out = gzip.open('sm%1.3f_dm%1.3f_sf%1.3f_df%1.3f_sh%1.3f_sd%1.3f_sc%1.3f_disp%1.3f_grad%1.3f_run%d_gens%05d.csv.gz'%\
+		out = gzip.open('sm%1.3f_dm%1.3f_sf%1.3f_df%1.3f_sh%1.3f_sd%1.3f_sc%1.3f_disp%1.3f_grad%1.3f_run%03d_gens%05d.csv.gz'%\
 			(sm, dm, sf, df, sh, sd, sc, disp, grad, run, genotypes['c']), 'w')		
 		out.write(str(genotypes['g'].shape)[1:-1]+'\ny\tFhit\tFmis\tYhit\tYmis\n')
 		np.savetxt(out, np.column_stack((yvals[:,1], Fh, Fm, Yh, Ym)), "%d", delimiter='\t')
@@ -270,8 +278,4 @@ def __main__():
 #	Z = Fratio(genotypes['g'])
 #	ax.plot_wireframe(X, Y, Z)
 #	plt.show()
-
-
-
 __main__()
-
