@@ -23,7 +23,7 @@ The parameters are:
 **sh** (selection against heterozygote females, heterozygote disadvantage),  
 **sd** (dosage compensation),  
 **sc** (sex chromosome co-adaption),  
-**disp** (fraction of a deme that disperse to each direction i.e. the actual dispersal is disp*4),  
+**disp** (fraction of a deme that disperse to each direction i.e. the actual dispersal is dispx4),  
 **grad** (population size gradient to be used; possible options are 0-8 for	speepnesses of 0, 1, 3, 5, 6, 7, 9, 11, and 13%), and  
 **run** (a number that will be part of the output file names)
 
@@ -54,7 +54,7 @@ The parameters are:
 **sh** (selection against heterozygote females, heterozygote disadvantage),  
 **sd** (dosage compensation),  
 **sc** (sex chromosome co-adaption),  
-**disp** (fraction of a deme that disperse to each direction i.e. the actual dispersal is disp*4),  
+**disp** (fraction of a deme that disperse to each direction i.e. the actual dispersal is dispx4),  
 **dispmod** (percentage that is removed from rightward dispersal and added to leftward dispersal), and  
 **run** (a number that will be part of the output file names)
 
